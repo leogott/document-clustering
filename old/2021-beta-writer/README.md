@@ -1,6 +1,6 @@
 # BetaWriter (2021) document clustering
 
-This repository contains an excerpt of the <i>prototype implementation of <b>Beta Writer</b></i>, the algorithmic author of [the first machine-generated research book published by Springer Nature](https://link.springer.com/book/10.1007/978-3-030-16800-1), developed by [Niko Schenk](https://www.english-linguistics.de/nschenk/), [Samuel Rönnqvist](https://github.com/sronnqvist) and other members of the Applied Computational Linguistics Lab. The original 2019 version of this data has been published under [https://github.com/acoli-repo/book-gen](https://github.com/acoli-repo/book-gen).
+This repository contains an excerpt of the <i>prototype implementation of <b>Beta Writer</b></i>, the algorithmic author of [the first machine-generated research book published by Springer Nature](https://link.springer.com/book/10.1007/978-3-030-16800-1). The original 2019 version of this data, developed by [Niko Schenk](https://www.english-linguistics.de/nschenk/), [Samuel Rönnqvist](https://github.com/sronnqvist) and other members of the Applied Computational Linguistics Lab, has been published under [https://github.com/acoli-repo/book-gen](https://github.com/acoli-repo/book-gen). This code has been updated in 2021 by Kathrin Donandt.
 
 This project is open source software and released under the [MIT license](https://opensource.org/licenses/MIT).
 
