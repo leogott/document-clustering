@@ -6,7 +6,7 @@ This project is open source software and released under the [MIT license](https:
 
 For more implementational details, please refer to our [system pipeline description in Section 2.3.](https://link.springer.com/content/pdf/bfm%3A978-3-030-16800-1%2F1.pdf).
 
-The scripts for the major text processing tasks in the updated Beta Writer (2021) system include:
+The scripts for the major text processing tasks in the publicly released Beta Writer (2019) system include:
 
 * Book structure generation (<code>mkstructure_html.py</code>) and visualization (<code>plot.py</code>)
 
