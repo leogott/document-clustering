@@ -1,0 +1,67 @@
+# Git should ignore these files and directories
+arxiv-metadata-oai-snapshot.json
+topic-modeling-arxiv-abstract-with-bertopic.ipynb
+
+*.code-workspace
+.vscode/
+process/
+cache/*
+!cache/CACHEDIR.TAG
+
+# Logging and temp files
+*log.txt
+*out.txt
+*.log
+
+# python shelve
+*.bak
+*.dat
+*.dir
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ---
+# Boilerplate from here
+
+# C extensions
+*.so
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
