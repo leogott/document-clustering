@@ -6,3 +6,9 @@ dependencies:
   - pypdf
   - pdfminer.six
   - python-poppler
+  - google-cloud-storage
+  - pandas
+  - scikit-learn
+  - ipykernel
+  - regex
+  - matplotlib
