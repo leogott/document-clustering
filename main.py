@@ -81,21 +81,6 @@ def poppler_extract(arg) -> str:
     page_1_text = page_1.text()
     return page_1_text
 
-""" def pdfminer_layout_extract(arg) -> str:
-    # https://denis.papathanasiou.org/archive/2010.08.04.post.pdf
-    pages=layout_scanner.get_pages(arg)
-    return pages[0]
-
-def pdftotext_extract(arg) -> str:
-    with open(arg, "rb") as f:
-        pdf = pdftotext.PDF(f)
-    return pdf[0]
-
-def pdftextract_extract(arg) -> str:
-    pdf = XPdf(arg)
-    return pdf.to_text() """
-
-
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
