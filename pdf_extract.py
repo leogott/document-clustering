@@ -7,8 +7,8 @@ from io import BytesIO
 
 
 class PdfDocument:
-    def __init__(self, arg):
-        self.content = arg
+    def __init__(self, file):
+        self.content = file
 
     @classmethod
     def from_file(cls, path):
@@ -21,7 +21,6 @@ class PdfDocument:
 
     @staticmethod
     def pypdf_extract_text(arg) -> str:
-        """"""
         # https://pypdf.readthedocs.io/en/stable/user/post-processing-in-text-extraction.html
         # https://pypdf.readthedocs.io/en/stable/user/extract-text.html
         reader = PdfReader(arg)
@@ -29,23 +28,33 @@ class PdfDocument:
         for page in reader.pages:
          pages.append(page.extract_text())
         # print(reader.metadata)
-        return str(pages)
-    
-    @staticmethod
-    def pypdf_extract(arg) -> str:
-        reader = PdfReader(arg)
-        
-        return reader.pages
+        return " ".join(pages)
 
     @staticmethod
-    def pdfminersix_extract(arg) -> str:
+    def pdfminersix_extract_text(arg) -> str:
         # https://pdfminersix.readthedocs.io/en/latest/topic/converting_pdf_to_text.html
         # https://www.unixuser.org/~euske/python/pdfminer/programming.html
         return extract_text(arg)
 
     @staticmethod
-    def poppler_extract(arg) -> str:
+    def poppler_extract_text(arg) -> str:
         pdf_document = load_from_data(arg)
-        page_1 = pdf_document.create_page(0)
-        page_1_text = page_1.text()
-        return page_1_text
+        text_pages = []
+        for page_index in range(pdf_document.pages):
+            pdf_page = pdf_document.create_page(page_index)
+            text_pages += pdf_page.text()
+        return " ".join(text_pages)
+    
+    def poppler_text_list(self) -> list:
+        """Returns a list of TextBox objects with attached style information
+        
+        Output structure subject to change"""
+        pdf_data = self.content
+        pdf_document = load_from_data(pdf_data)
+
+        # Possibly replace with itertools chain
+        boxes = []
+        for page_index in range(pdf_document.pages):
+            pdf_page = pdf_document.create_page(page_index)
+            boxes.append(pdf_page.text_list(pdf_page.TextListOption.text_list_include_font))
+        return boxes
