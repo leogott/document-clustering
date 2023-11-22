@@ -17,28 +17,25 @@ class PdfDocument:
         return cls(content)
 
     def extract_text(self) -> str:
-        return self.pypdf_extract_text(BytesIO(self.content))
+        return self.poppler_extract_text()
 
-    @staticmethod
-    def pypdf_extract_text(arg) -> str:
+    def pypdf_extract_text(self) -> str:
         # https://pypdf.readthedocs.io/en/stable/user/post-processing-in-text-extraction.html
         # https://pypdf.readthedocs.io/en/stable/user/extract-text.html
-        reader = PdfReader(arg)
+        reader = PdfReader(self.content)
         pages = []
         for page in reader.pages:
          pages.append(page.extract_text())
         # print(reader.metadata)
         return " ".join(pages)
 
-    @staticmethod
-    def pdfminersix_extract_text(arg) -> str:
+    def pdfminersix_extract_text(self) -> str:
         # https://pdfminersix.readthedocs.io/en/latest/topic/converting_pdf_to_text.html
         # https://www.unixuser.org/~euske/python/pdfminer/programming.html
-        return extract_text(arg)
+        return extract_text(self.content)
 
-    @staticmethod
-    def poppler_extract_text(arg) -> str:
-        pdf_document = load_from_data(arg)
+    def poppler_extract_text(self) -> str:
+        pdf_document = load_from_data(self.content)
         text_pages = []
         for page_index in range(pdf_document.pages):
             pdf_page = pdf_document.create_page(page_index)
