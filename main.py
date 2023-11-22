@@ -15,7 +15,6 @@ from pdf_extract import PdfDocument
 from collections import Counter
 import logging
 from urllib.request import urlopen
-# from difflib import unified_diff
 from io import BytesIO
 import pandas as pd
 
@@ -60,44 +59,43 @@ def replace_ligatures(text: str) -> str:
     }
     return text.translate(ligatures)
 
-def strip_urls(text: str) -> str:
-    # Todo implement with regex
-    text.replace()
+def replace_urls(text: str, replace = None) -> str:
+    """replace urls with str or function"""
+    import re
+    p = re.compile(r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)")
+    def repl(m):
+        print(m.group(0))
+        return ''
+    new_text = re.sub(p, repl, text)
+    # Todo implement url removal
+    return new_text
+    # match.span()
 
 
 def main():
     """ Main entry point of the app """
-    from pypdf import PdfReader
+    from pprint import pprint
 
     paper = ArXiVDataset.get("2301.06511")
     # print(PDFDocument(paper).extract_text())
     # ArXiVDataset.query_metadata("2301.06511")
 
-    print("# Suspicious monograms")
+    # print("# Suspicious monograms")
     # bag_of_chars(PdfDocument(paper).extract_text())
 
-    reader = PdfReader(BytesIO(paper))
+    text_boxes = PdfDocument(paper).poppler_text_list()
 
-    page = reader.pages[3]
-    # print(page.extract_text())
+    print(text_boxes[0][5].text)
+    print(text_boxes[0][5].get_font_name())
+    print(text_boxes[0][5].get_font_size())
+    print(text_boxes[0][5].has_space_after)
 
-    parts = dict()
+    print(text_boxes[0][25].text)
+    print(text_boxes[0][25].get_font_name())
+    print(text_boxes[0][25].get_font_size())
+    print(text_boxes[0][25].has_space_after)
 
-    def visitor_body(text, cm, tm, font_dict, font_size):
-        font = dict.get(font_dict, "/BaseFont", "") if font_dict else "None"
-        if font in parts:
-            parts[font].update(Counter(text))
-        else:
-            parts[font] = Counter(text)
-
-    page.extract_text(visitor_text=visitor_body)
-    text_body = "".join(parts)
-
-    df = pd.DataFrame(parts)
-    print(df)
-
-    print(text_body)
-
+    replace_urls( "https://example.org?query=a&something /n www.website.de http://another.org/" )
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
