@@ -1,10 +1,11 @@
+from typing import Any
 from pdfminer.high_level import extract_text
+import poppler
 from poppler import load_from_data
 from pypdf import PdfReader
 
 
 from io import BytesIO
-
 
 class PdfDocument:
     def __init__(self, file):
@@ -42,7 +43,7 @@ class PdfDocument:
             text_pages += pdf_page.text()
         return " ".join(text_pages)
     
-    def poppler_text_list(self) -> list:
+    def poppler_text_list(self) -> list[list[poppler.page.TextBox]]:
         """Returns a list of TextBox objects with attached style information
         
         Output structure subject to change"""
