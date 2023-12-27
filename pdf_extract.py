@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import poppler
+import poppler.page
 from pdfminer.high_level import extract_text
 from poppler import load_from_data
 from pypdf import PdfReader
@@ -8,6 +9,13 @@ from pypdf import PdfReader
 __author__ = "Leona Gottfried"
 __version__ = "0.1.0"
 __license__ = "MIT"
+
+# class TextBox(poppler.page.TextBox):
+#     # def __dict__(self):...
+
+#     def a(arg: TextBox) -> dict:
+#         print(arg.__dict__)
+#         return arg
 
 
 class PdfDocument:
@@ -58,7 +66,13 @@ class PdfDocument:
         boxes = []
         for p, page_index in enumerate(range(pdf_document.pages)):
             pdf_page = pdf_document.create_page(page_index)
-            for box in pdf_page.text_list(pdf_page.TextListOption.text_list_include_font):
-                box.page = p
-                boxes.append(box)
+            boxes.extend([
+                {
+                    "text": box.text,
+                    "page": p,
+                    "font_size": box.get_font_size(),
+                    "font_name": box.get_font_name(),
+                } for box in pdf_page.text_list(
+                    pdf_page.TextListOption.text_list_include_font)
+            ])
         return boxes

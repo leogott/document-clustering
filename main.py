@@ -51,12 +51,22 @@ def replace_ligatures(text: str) -> str:
     return text.translate(ligatures)
 
 
-def filter_font_size(stream: Iterable, __filter):
-    for item in stream:
-        if item.get_font_size() > 10:
-            logger.debug("Discarded item with text: %s", item.text)
-            continue
-        yield item
+def font_size_filter(min_font_size=0, max_font_size=10):
+    def filter_font_size(item):
+        if item["font_size"] >= max_font_size or item["font_size"] <= min_font_size:
+            logger.debug("Discarded item with text: %s", item["text"])
+            return False
+        return True
+    return filter_font_size
+
+
+def font_name_filter(font_list: list, *, accept=True):
+    def filter_font_name(item):
+        if item["font_name"] in font_list:
+            logger.debug("Font matched on item with text %s", item["text"])
+            return accept
+        return not accept
+    return filter_font_name
 
 
 def _debug_replace_urls(text: str) -> str:
@@ -75,13 +85,14 @@ def replace_urls(text: str, replace_with: str | Callable[..., str] = "") -> str:
     return re.sub(p, replace_with, text)
 
 
-def bundled(sentence_list, group_data):
+def recombine(sentence_list, text_boxes):
     """Re-attach (potentially un-hashable) data-objects.
 
     Take an iterable of lists of tuples (obj, i),
     and a mapping of i to data,
     enumerate the group data and re-attach it.
     """
+    group_data = dict(enumerate(text_boxes))
     for sentence in sentence_list:
         yield [(a, group_data[i]) for a, i in sentence]
 
@@ -91,17 +102,17 @@ def tokenize(tokenizer: Tokenizer, text_boxes):
 
     Wrap glassplitter tokenizer and re-attach data.
     """
-    text_box_dict = dict(enumerate(text_boxes))
-    spans = ((item.text, i) for i, item in text_box_dict.items())
+    spans = ((item["text"], i) for i, item in enumerate(text_boxes))
     sentence_list = tokenizer.split(spans, trim=True)
 
-    return list(bundled(sentence_list, text_box_dict))
+    return list(recombine(sentence_list, text_boxes))
 
 
-def main() -> list[str]:
-    replace_urls(
-        "https://example.org?query=a&something /n www.website.de http://another.org/"
-    )
+def filter_text_boxes(text_boxes, filters: list[Callable[..., bool]]):
+    """Apply each filter."""
+    for fun in filters:
+        text_boxes = list(filter(fun, text_boxes))
+    return text_boxes
 
 
 if __name__ == "__main__":
@@ -109,7 +120,14 @@ if __name__ == "__main__":
     tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
     # [[("", 0), ("I", 0), ("am", 0), ("a", 0), ("split", 1), ("sentence", 1), ("!", 1), ("", 1)]]
     paper = ArXiVDataset.get("2301.06511")
-    text_boxes = PdfDocument(paper).poppler_text_list()[:99]
+    spans = PdfDocument(paper).poppler_text_list()[:99]
 
-    out = list(tokenize(tokenizer, text_boxes))
+    spans = filter_text_boxes(
+        spans,
+        [
+            font_name_filter(["Times-Roman"], accept=False),
+            font_size_filter(),
+        ])
+
+    out = list(tokenize(tokenizer, spans))
     rich.print(out)

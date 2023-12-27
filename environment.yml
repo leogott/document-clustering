@@ -6,9 +6,13 @@ dependencies:
   - pypdf
   - pdfminer.six
   - python-poppler
-  - google-cloud-storage
   - pandas
   - scikit-learn
   - ipykernel
   - regex
   - matplotlib
+  - pip
+  - pip:
+    # - "--editable=git+https://github.com/glaserL/glassplitter.git#egg=glassplitter"
+    - "git+https://github.com/glaserL/glassplitter.git#egg=glassplitter"
+  - rich
