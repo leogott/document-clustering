@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
+# ruff: noqa: S301
 """Abstraction layer for ArXiV."""
 
-# ruff: noqa: S301
 
 __author__ = "Leona Gottfried"
 __version__ = "0.1.0"
@@ -22,11 +22,15 @@ class ArXiVDataset:
 
     @staticmethod
     def query_metadata(arxiv_id):
+        """Query the ArXiV-Dataset for metadata.
+
+        arxiv_id: (required) Provide a specific ID.
+        """
         # query the arXiv
         url = "http://export.arxiv.org/api/query?"
         params = {"id_list": arxiv_id, "start": 0, "max_results": 1}
         data = urlopen(url + urlencode(params))
-        print(data.read().decode("utf-8"))
+        return data.read().decode("utf-8")
 
     @staticmethod
     def _arxiv_download(arxiv_id: str) -> bytes:
@@ -36,7 +40,7 @@ class ArXiVDataset:
 
     @classmethod
     def _arxiv_cached_download(cls, arxiv_id: str) -> bytes:
-        """Using shelve as a cache, return the downloaded pdf."""
+        """Return the downloaded pdf, using shelve as a cache."""
         with shelve.open("arxiv_cache") as db:
             if arxiv_id not in db:
                 log(f"{arxiv_id} was not found in the local db. Requesting…")
@@ -55,8 +59,3 @@ class ArXiVDataset:
         Behaves very similar to builtin open().
         """
         return BytesIO(cls.get(arxiv_id))
-
-
-if __name__ == "__main__":
-    # This is executed when run from the command line
-    pass
