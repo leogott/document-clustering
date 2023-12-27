@@ -1,7 +1,11 @@
 # Git should ignore these files and directories
+.vscode/
+process/
+
 # Logging and temp files
 *log.txt
 *out.txt
+*.log
 
 # python shelve
 *.bak
