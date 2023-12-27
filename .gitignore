@@ -1,4 +1,5 @@
 # Git should ignore these files and directories
+*.code-workspace
 .vscode/
 process/
 
