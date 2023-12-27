@@ -1,7 +1,13 @@
+from pathlib import Path
+
 import poppler
 from pdfminer.high_level import extract_text
 from poppler import load_from_data
 from pypdf import PdfReader
+
+__author__ = "Leona Gottfried"
+__version__ = "0.1.0"
+__license__ = "MIT"
 
 
 class PdfDocument:
@@ -12,9 +18,8 @@ class PdfDocument:
 
     @classmethod
     def from_file(cls, path):
-        with open(path, "rb") as file:
-            content = file.read()
-        return cls(content)
+        """Alternative constructor from path or path-like."""
+        return cls(Path(path).read_bytes())
 
     def pypdf_extract_text(self) -> str:
         """Return the entire text data of a pdf using pypdf."""
