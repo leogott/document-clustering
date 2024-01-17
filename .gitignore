@@ -1,4 +1,6 @@
 # Git should ignore these files and directories
+arxiv-metadata-oai-snapshot.json
+
 *.code-workspace
 .vscode/
 process/
