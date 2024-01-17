@@ -1,5 +1,6 @@
 # Git should ignore these files and directories
 arxiv-metadata-oai-snapshot.json
+topic-modeling-arxiv-abstract-with-bertopic.ipynb
 
 *.code-workspace
 .vscode/
