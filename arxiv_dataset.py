@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ruff: noqa: S301
-"""Abstraction layer for ArXiV."""
+"""Abstraction layer for downloading, caching, loading PDFs from ArXiV."""
 
 
 __author__ = "Leona Gottfried"
@@ -8,54 +8,72 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import logging
-import shelve
 from io import BytesIO
+from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-logger = logging.getLogger()
+import feedparser
+from sklearn.utils import Bunch
+
+from utils import shelve_memoize
+
+logger = logging.getLogger(__name__)
 log = logger.debug
 
 
-class ArXiVDataset:
-    """Abstraction layer for downloading, caching, loading PDFs from ArXiV."""
+@shelve_memoize("arxiv_metadata_cache")
+def query_metadata(arxiv_id):
+    """Query the ArXiV-Dataset for metadata.
 
-    @staticmethod
-    def query_metadata(arxiv_id):
-        """Query the ArXiV-Dataset for metadata.
+    arxiv_id: (required) Provide a specific ID.
 
-        arxiv_id: (required) Provide a specific ID.
-        """
-        # query the arXiv
-        url = "http://export.arxiv.org/api/query?"
-        params = {"id_list": arxiv_id, "start": 0, "max_results": 1}
-        data = urlopen(url + urlencode(params))
-        return data.read().decode("utf-8")
+    arXiv provides an API in the form of an Atom feed. This function conveniently
+    returns a Dict-like (and also Bunch-like) object containing a paper's metadata.
 
-    @staticmethod
-    def _arxiv_download(arxiv_id: str) -> bytes:
-        url = f"https://arxiv.org/pdf/{arxiv_id}"
-        with urlopen(url) as s:
-            return s.read()
+    Ref: <https://feedparser.readthedocs.io/en/latest/common-atom-elements.html>
+    """
+    url = "http://export.arxiv.org/api/query?"
+    params = {"id_list": arxiv_id, "start": 0, "max_results": 1}
+    return feedparser.parse(url + urlencode(params)).entries[0]
 
-    @classmethod
-    def _arxiv_cached_download(cls, arxiv_id: str) -> bytes:
-        """Return the downloaded pdf, using shelve as a cache."""
-        with shelve.open("arxiv_cache") as db:
-            if arxiv_id not in db:
-                log(f"{arxiv_id} was not found in the local db. Requesting…")
-                db[arxiv_id] = cls._arxiv_download(arxiv_id)
-            return db.get(arxiv_id)
 
-    @classmethod
-    def get(cls, arxiv_id) -> bytes:
-        """Return the binary content of the requested paper's pdf."""
-        return cls._arxiv_cached_download(arxiv_id)
+@shelve_memoize("arxiv_cache")
+def get(arxiv_id) -> bytes:
+    """Return the binary content of the requested paper's pdf."""
+    url = f"https://export.arxiv.org/pdf/{arxiv_id}"
+    with urlopen(url) as s:
+        return s.read()
 
-    @classmethod
-    def stream(cls, arxiv_id: str) -> BytesIO:
-        """Return a buffered stream of the requested paper's pdf.
 
-        Behaves very similar to builtin open().
-        """
-        return BytesIO(cls.get(arxiv_id))
+def stream(arxiv_id: str) -> BytesIO:
+    """Return a buffered stream of the requested paper's pdf.
+
+    Behaves very similar to builtin open().
+    """
+    return BytesIO(get(arxiv_id))
+
+
+def fetch_arxiv_sample(file=Path("sample/test_sample.txt")):
+    """
+    Return a Bunch (Dict-like) of the specified papers and some metadata.
+
+    Beware: data is just a list of pdfs in byte form.
+    """
+    ids = []
+    titles = []
+    dates = []
+    corpus = []
+    for line in file.read_text().splitlines():
+        metadata = query_metadata(line)
+
+        # for line in Path("sample/arxiv_sample.json").read_text().splitlines():
+        # paper = json.loads(line)
+        logger.debug("Processing: %s", line)
+
+        ids.append(line)
+        titles.append(metadata.title)
+        dates.append(metadata.updated)
+
+        corpus.append(get(line))
+    return Bunch(data=corpus, ids=ids, titles=titles, dates=dates)
