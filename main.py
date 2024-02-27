@@ -8,20 +8,21 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import logging
+import operator
 import re
 from collections import Counter
 from collections.abc import Callable, Iterable
+from functools import reduce
 from string import ascii_letters
 
 import rich
 from glassplitter import Tokenizer
 
-from arxiv_dataset import ArXiVDataset
-from pdf_extract import PdfDocument
+import arxiv_dataset
+from pdf_extract import PdfDocument, unbox_text
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 def bag_of_words(): ... #TODO (leogott): implement this
 
@@ -84,7 +85,6 @@ def replace_urls(text: str, replace_with: str | Callable[..., str] = "") -> str:
     )
     return re.sub(p, replace_with, text)
 
-
 def recombine(sentence_list, text_boxes):
     """Re-attach (potentially un-hashable) data-objects.
 
@@ -96,17 +96,28 @@ def recombine(sentence_list, text_boxes):
     for sentence in sentence_list:
         yield [(a, group_data[i]) for a, i in sentence]
 
-
-def tokenize(tokenizer: Tokenizer, text_boxes):
+def tokenize_with_data(tokenizer: Tokenizer, text_boxes):
     """Tokenize text-boxes.
 
     Wrap glassplitter tokenizer and re-attach data.
     """
-    spans = ((item["text"], i) for i, item in enumerate(text_boxes))
+    spans = unbox_text(text_boxes)
     sentence_list = tokenizer.split(spans, trim=True)
 
     return list(recombine(sentence_list, text_boxes))
 
+
+def tokenize_only(tokenizer: Tokenizer, spans: list[str]) -> list[list[str]]:
+    """Extract text from Poppler text-boxes."""
+    sentence_list = tokenizer.split(spans, trim=True)
+
+    for sentence in sentence_list:
+        yield [a for a, i in sentence]
+
+def tokenizer_flat_wrapped(tokenizer: Tokenizer) -> Callable:
+    def tokenize(arg: str):
+        return list(reduce(operator.add, tokenize_only(tokenizer, arg)))
+    return tokenize
 
 def filter_text_boxes(text_boxes, filters: list[Callable[..., bool]]):
     """Apply each filter."""
@@ -117,10 +128,10 @@ def filter_text_boxes(text_boxes, filters: list[Callable[..., bool]]):
 
 if __name__ == "__main__":
     # spans = [("I am a ", {"line": 1}), ("split sentence!", {"line": 2})]
-    tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
+    tokenize_only = Tokenizer(lang="en", clean=True, doc_type="pdf")
     # [[("", 0), ("I", 0), ("am", 0), ("a", 0), ("split", 1), ("sentence", 1), ("!", 1), ("", 1)]]
-    paper = ArXiVDataset.get("2301.06511")
-    spans = PdfDocument(paper).poppler_text_list()[:99]
+    paper = arxiv_dataset.get("2301.06511")
+    spans = PdfDocument(paper).poppler_textboxes_flat()[:99]
 
     spans = filter_text_boxes(
         spans,
@@ -129,5 +140,5 @@ if __name__ == "__main__":
             font_size_filter(),
         ])
 
-    out = list(tokenize(tokenizer, spans))
+    out = list(tokenize_with_data(tokenize_only, spans))
     rich.print(out)

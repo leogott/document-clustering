@@ -3,6 +3,7 @@
 Bad style, I know, but I made up for it in documentation!
 """
 
+
 import logging
 import shelve
 from collections.abc import Callable
@@ -12,6 +13,10 @@ from time import perf_counter_ns
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+__author__ = "Leona Gottfried"
+__version__ = "0.1.0"
+__license__ = "MIT"
 
 ## Memoize
 
