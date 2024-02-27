@@ -16,6 +16,7 @@ from urllib.request import urlopen
 import feedparser
 from sklearn.utils import Bunch
 
+from pdf_extract import is_pdf
 from utils import shelve_memoize
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,10 @@ def get(arxiv_id) -> bytes:
     """Return the binary content of the requested paper's pdf."""
     url = f"https://export.arxiv.org/pdf/{arxiv_id}"
     with urlopen(url) as s:
-        return s.read()
+        pdf = s.read()
+        if not is_pdf(pdf):
+            raise RuntimeError("arxiv did not return a pdf for {}", arxiv_id)
+        return pdf
 
 
 def stream(arxiv_id: str) -> BytesIO:
