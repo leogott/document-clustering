@@ -27,7 +27,7 @@ def shelve_memoize(filename: str):
         def wrapper_shelve_memoize(arxiv_id):
             with shelve.open(filename) as db: # noqa: S301
                 if arxiv_id not in db:
-                    logger.debug(f"{arxiv_id} was not found in the local metadata db. Requesting…")
+                    logger.debug(f"Cache miss for {filename}! Fetching {arxiv_id} ...")
                     db[arxiv_id] = func(arxiv_id)
                 return db.get(arxiv_id)
         return wrapper_shelve_memoize
