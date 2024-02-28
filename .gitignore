@@ -5,6 +5,8 @@ topic-modeling-arxiv-abstract-with-bertopic.ipynb
 *.code-workspace
 .vscode/
 process/
+cache/*
+!cache/CACHEDIR.TAG
 
 # Logging and temp files
 *log.txt

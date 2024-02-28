@@ -9,6 +9,7 @@ import shelve
 from collections.abc import Callable
 from contextlib import contextmanager
 from functools import wraps
+from pathlib import Path
 from time import perf_counter_ns
 from typing import Any
 
@@ -25,7 +26,7 @@ def shelve_memoize(filename: str):
     def decorator_shelve_memoize(func: Callable[[str], Any]):
         @wraps(func)
         def wrapper_shelve_memoize(arxiv_id):
-            with shelve.open(filename) as db: # noqa: S301
+            with shelve.open(Path("cache") / filename) as db: # noqa: S301
                 if arxiv_id not in db:
                     logger.debug(f"Cache miss for {filename}! Fetching {arxiv_id} ...")
                     db[arxiv_id] = func(arxiv_id)
