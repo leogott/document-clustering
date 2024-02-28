@@ -81,16 +81,17 @@ def custom_analyzer(tokenizer):
 
 analyzer = custom_analyzer(tokenizer)
 data = []
-for i, pdf in enumerate(corpus):
-    logger.debug("Analyzing pdf %s", arxiv_sample.ids[i])
-    try:
-        data.append(analyzer(pdf))
-    except:
-        logger.exception(
+with execution_time() as t:
+    for i, pdf in enumerate(corpus):
+        logger.debug("Analyzing pdf %s", arxiv_sample.ids[i])
+        try:
+            data.append(analyzer(pdf))
+        except:
+            logger.exception(
             "An error occured while handling arxiv_id %s", arxiv_sample.ids[i]
         )
-        raise
-logger.info(f"Tokenized {len(data)=} PDFs")
+            raise
+logger.info(f"Tokenized {len(data)=} PDFs in {t()}")
 
 ## Tfidf Vectorizer
 
@@ -107,14 +108,14 @@ tfidf_vectorizer = make_pipeline(
 )
 with execution_time() as t:
     tfidf_matrix = tfidf_vectorizer.fit_transform(data)
-logger.info(f"Vectorization done in {t()}ns")
+logger.info(f"Vectorization done in {t()}")
 
 ## KMeans Clustering
 
 kmeans = KMeans(n_clusters=N_CLUSTERS, random_state=0)
 with execution_time() as t:
     kmeans.fit(tfidf_matrix)
-logger.info(f"Clustering done in {t()}ns")
+logger.info(f"Clustering done in {t()}")
 
 ## Analysis: Clusters
 

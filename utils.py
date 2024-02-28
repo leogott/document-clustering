@@ -4,13 +4,14 @@ Bad style, I know, but I made up for it in documentation!
 """
 
 
+import datetime
 import logging
 import shelve
 from collections.abc import Callable
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
-from time import perf_counter_ns
+from time import perf_counter, perf_counter_ns
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -44,8 +45,8 @@ def shelve_forget(filename: str, arxiv_id):
 @contextmanager
 def execution_time():
     """Log the runtime of the decorated function."""
-    t0 = t1 = perf_counter_ns()
+    t0 = t1 = perf_counter()
     def get_time_delta():
-        return t1-t0
+        return datetime.timedelta(seconds=t1-t0)
     yield get_time_delta
-    t1 = perf_counter_ns()
+    t1 = perf_counter()
