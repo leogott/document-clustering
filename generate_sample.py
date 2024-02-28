@@ -40,7 +40,7 @@ N_CLUSTERS = 5
 
 ## Data, Metadata
 
-arxiv_sample = fetch_arxiv_sample(Path("sample/larger_test_sample.txt"))
+arxiv_sample = fetch_arxiv_sample(Path("sample/50_ids.txt"))
 metadata = pd.DataFrame({
     "arxiv_id": arxiv_sample.ids,
     "title": arxiv_sample.titles,
