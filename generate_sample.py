@@ -99,10 +99,14 @@ tfidf_vectorizer = make_pipeline(
     CountVectorizer(
         # max_df=0.5, # Percentage of docs
         # min_df=3, # Absolute number of docs to contain feature (word)
+        #
+        # vectorizer expects documents to be of str, so some trickery is required here
         preprocessor=partial(map, str.lower),
-        tokenizer=lambda x: x,
+        tokenizer=lambda x: x, # documents are tokenized already
+        #
         max_features=5000,
-        stop_words="english", # not used when analyzer in use
+        # stop_words and ngram_range are not used when analyzer in use
+        stop_words="english",
         # ngram_range=(1, 2),
     ),
     TfidfTransformer(sublinear_tf=True),
