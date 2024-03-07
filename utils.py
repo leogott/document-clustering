@@ -11,7 +11,7 @@ from collections.abc import Callable
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
-from time import perf_counter, perf_counter_ns
+from time import perf_counter
 from typing import Any
 
 logger = logging.getLogger(__name__)
