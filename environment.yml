@@ -18,3 +18,4 @@ dependencies:
     - "git+https://github.com/glaserL/glassplitter.git#egg=glassplitter"
   - rich
   - feedparser
+  - conllu
