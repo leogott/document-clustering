@@ -105,3 +105,27 @@ def unbox_text(text_boxes: list[TextBox])-> Generator[tuple[str, int], Any, None
     """Take the output from poppler_textboxes_flat and turn it into something glassplitter can digest."""
     for i, item in enumerate(text_boxes):
         yield item["text"]
+
+
+
+def custom_analyzer(tokenizer):
+    """Turn a pdf into a list of str tokens.
+
+    Preprocessor and tokenizer in one.
+    """
+
+    stop_words = ["", "the"]
+    def wrapped_custom_analyzer(pdf):
+        # No sentence segmentation, assume each text-box contains exactly one sentence
+        textboxes = PdfDocument(pdf).poppler_textboxes_flat()
+        # TODO(leogott): insert preproc pipeline here
+        sentences = unbox_text(textboxes)
+
+        # TODO(leogott): String Transformation / str.lower
+
+        tokens = tokenizer.split_flat(sentences)
+
+        # filter-out stop words
+        return list(filter(lambda t: t not in stop_words, tokens))
+
+    return wrapped_custom_analyzer

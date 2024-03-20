@@ -18,7 +18,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import make_pipeline
 
 from arxiv_dataset import fetch_arxiv_sample
-from pdf_extract import PdfDocument, unbox_text
+from pdf_extract import PdfDocument, custom_analyzer, unbox_text
 from utils import execution_time
 
 ## Logger
@@ -52,29 +52,7 @@ tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
 
 ## Preprocessor
 
-stop_words = ["", "the"]
 
-
-def custom_analyzer(tokenizer):
-    """Turn a pdf into a list of str tokens.
-
-    Preprocessor and tokenizer in one.
-    """
-
-    def wrapped_custom_analyzer(pdf):
-        # No sentence segmentation, assume each text-box contains exactly one sentence
-        textboxes = PdfDocument(pdf).poppler_textboxes_flat()
-        # TODO(leogott): insert preproc pipeline here
-        sentences = unbox_text(textboxes)
-
-        # TODO(leogott): String Transformation / str.lower
-
-        tokens = tokenizer.split_flat(sentences)
-
-        # filter-out stop words
-        return list(filter(lambda t: t not in stop_words, tokens))
-
-    return wrapped_custom_analyzer
 
 
 analyzer = custom_analyzer(tokenizer)
