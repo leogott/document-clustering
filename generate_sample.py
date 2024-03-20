@@ -18,7 +18,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import make_pipeline
 
 from arxiv_dataset import fetch_arxiv_sample
-from pdf_extract import PdfDocument, custom_analyzer, unbox_text
+from pdf_extract import custom_analyzer
 from utils import execution_time
 
 ## Logger
@@ -52,10 +52,10 @@ tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
 
 ## Preprocessor
 
-
-
-
-analyzer = custom_analyzer(tokenizer)
+stop_words = ["", "the"]
+# TODO(leogott): insert preproc pipeline here
+# TODO(leogott): String Transformation / str.lower
+analyzer = custom_analyzer(tokenizer, filter_tokens=stop_words)
 data = []
 with execution_time() as t:
     for i, pdf in enumerate(corpus):

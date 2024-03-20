@@ -1,10 +1,11 @@
 import logging
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from pathlib import Path
 from typing import Any
 
 import poppler
 import poppler.page
+from glassplitter import Tokenizer
 from pdfminer.high_level import extract_text
 from poppler.page import TextBox
 from pypdf import PdfReader
@@ -108,24 +109,31 @@ def unbox_text(text_boxes: list[TextBox])-> Generator[tuple[str, int], Any, None
 
 
 
-def custom_analyzer(tokenizer):
+def custom_analyzer(
+    tokenizer: Tokenizer,
+    *,
+    filter_textboxes: Callable[[TextBox], bool] = lambda tbx: True,
+    transform_sentences: Callable[[str], str] = lambda snt: snt,
+    filter_tokens: list[str] = [],
+):
     """Turn a pdf into a list of str tokens.
 
     Preprocessor and tokenizer in one.
     """
 
-    stop_words = ["", "the"]
     def wrapped_custom_analyzer(pdf):
         # No sentence segmentation, assume each text-box contains exactly one sentence
         textboxes = PdfDocument(pdf).poppler_textboxes_flat()
-        # TODO(leogott): insert preproc pipeline here
-        sentences = unbox_text(textboxes)
 
-        # TODO(leogott): String Transformation / str.lower
+        filtered_textboxes = filter(filter_textboxes, textboxes)
 
-        tokens = tokenizer.split_flat(sentences)
+        sentences = unbox_text(filtered_textboxes)
 
-        # filter-out stop words
-        return list(filter(lambda t: t not in stop_words, tokens))
+        transformed_sentences = map(transform_sentences, sentences)
+
+        tokens = tokenizer.split_flat(transformed_sentences)
+
+        filtered_tokens = filter(lambda t: t not in filter_tokens, tokens)
+        return list(filtered_tokens)
 
     return wrapped_custom_analyzer
