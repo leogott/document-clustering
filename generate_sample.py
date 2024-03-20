@@ -5,8 +5,7 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import logging
-import operator
-from functools import partial, reduce
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -19,7 +18,6 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import make_pipeline
 
 from arxiv_dataset import fetch_arxiv_sample
-from main import tokenize_only
 from pdf_extract import PdfDocument, unbox_text
 from utils import execution_time
 
@@ -71,7 +69,7 @@ def custom_analyzer(tokenizer):
 
         # TODO(leogott): String Transformation / str.lower
 
-        tokens = reduce(operator.add, tokenize_only(tokenizer, sentences))
+        tokens = tokenizer.split_flat(sentences)
 
         # filter-out stop words
         return list(filter(lambda t: t not in stop_words, tokens))

@@ -104,4 +104,4 @@ def _get_font_name(box):
 def unbox_text(text_boxes: list[TextBox])-> Generator[tuple[str, int], Any, None]:
     """Take the output from poppler_textboxes_flat and turn it into something glassplitter can digest."""
     for i, item in enumerate(text_boxes):
-        yield (item["text"], i)
+        yield item["text"]
