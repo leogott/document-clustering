@@ -19,3 +19,4 @@ dependencies:
   - rich
   - feedparser
   - conllu
+  - numpy
