@@ -2,6 +2,18 @@
 
 Clustering documents according to document similarity, with a focus on scientific publications.
 
+[![PyPI - Version](https://img.shields.io/pypi/v/document-clustering.svg)](https://pypi.org/project/document-clustering)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/document-clustering.svg)](https://pypi.org/project/document-clustering)
+
+-----
+
+**Table of Contents**
+
+- [ACoLi Document Clustering](#acoli-document-clustering)
+  - [Getting started](#getting-started)
+  - [Earlier work](#earlier-work)
+  - [License](#license)
+
 ## Getting started
 
 `generate_sample.py` is a good starting point. The code is very readable and hackable.
@@ -28,3 +40,8 @@ But there are several earlier in-house implementations in the `old/` directory, 
 
 - `old/2019-beta-writer`: plain cosine-based document clustering
 - `old/2021-beta-writer`: minor revision of `2019-beta-writer` with duplicate avoidance
+
+
+## License
+
+`document-clustering` (excluding the `old` subdirectory) is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
