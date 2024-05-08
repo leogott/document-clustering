@@ -4,6 +4,7 @@ topic-modeling-arxiv-abstract-with-bertopic.ipynb
 
 *.code-workspace
 .vscode/
+.idea/
 process/
 cache/*
 !cache/CACHEDIR.TAG
