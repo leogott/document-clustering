@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Callable, Generator, Iterable
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import poppler
 import poppler.page
@@ -112,9 +112,9 @@ def unbox_text(text_boxes: Iterable[TextBox]) -> Generator[tuple[str, int], Any,
 def custom_analyzer(
     tokenizer: Tokenizer,
     *,
-    filter_textboxes: Callable[[TextBox], bool] = lambda tbx: True,
+    filter_textboxes: Callable[[TextBox], bool] | None = None,
     transform_sentences: Callable[[str], str] = lambda snt: snt,
-    filter_tokens: Optional[list[str]] = None,
+    filter_tokens: list[str] | None = None,
 ):
     """Turn a pdf into a list of str tokens.
 
@@ -122,6 +122,9 @@ def custom_analyzer(
     """
     if filter_tokens is None:
         filter_tokens = []
+    if filter_textboxes is None:
+        def filter_textboxes(_tbx):
+            return True
 
     def wrapped_custom_analyzer(pdf):
         # No sentence segmentation, assume each text-box contains exactly one sentence

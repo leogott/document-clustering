@@ -108,10 +108,10 @@ order_centroids = original_space_centroids.argsort()[:, ::-1]
 terms = tfidf_vectorizer.get_feature_names_out()
 
 for i in range(N_CLUSTERS):
-    print(f"Cluster {i}: ", end="")
-    for ind in order_centroids[i, :10]:
-        print(f"'{terms[ind]}' ", end="")
-    print()
+    line = f"Cluster {i}: " + "".join(
+            [f"'{terms[ind]}' " for ind in order_centroids[i, :10]]
+        )
+    logger.info(line)
 
 # { "topics" : {"id":"1", "top 5": ["bag", "image", "cup"] }}
 topics = {"kmeans": [{"cluster": str(i), "size": cluster_sizes[i], "top 5": [terms[tid] for tid in order_centroids[i, :5]]} for i in range(N_CLUSTERS)]}
@@ -125,4 +125,4 @@ cluster_distances: pd.DataFrame = kmeans_pipeline.transform(data)
 # cluster_distances = cluster_distances.assign(cluster=kmeans_pipeline.predict(data))
 cluster_distances = cluster_distances.assign(cluster=kmeans.labels_)
 cluster_metadata = cluster_distances.join(metadata)
-print(cluster_metadata)
+logger.info(cluster_metadata)
