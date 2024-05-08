@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import logging
-from collections.abc import Callable, Generator, Iterable
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import poppler
 import poppler.page
-from glassplitter import Tokenizer
-from poppler.page import TextBox
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator, Iterable
+
+    from glassplitter import Tokenizer
+    from poppler.page import TextBox
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +40,8 @@ class PdfDocument:
         return cls(Path(path).read_bytes())
 
     def pypdf_extract_text(self) -> str:
-        from pypdf import PdfReader
+        from pypdf import PdfReader  # noqa: PLC0415
+
         """Return the entire text data of a pdf using pypdf."""
         # https://pypdf.readthedocs.io/en/stable/user/post-processing-in-text-extraction.html
         # https://pypdf.readthedocs.io/en/stable/user/extract-text.html
@@ -45,7 +51,8 @@ class PdfDocument:
         return " ".join(pages)
 
     def pdfminersix_extract_text(self) -> str:
-        from pdfminer.high_level import extract_text
+        from pdfminer.high_level import extract_text  # noqa: PLC0415
+
         """Return the entire text data of a pdf using pdfminer.six."""
         # https://pdfminersix.readthedocs.io/en/latest/topic/converting_pdf_to_text.html
         # https://www.unixuser.org/~euske/python/pdfminer/programming.html
@@ -84,8 +91,8 @@ class PdfDocument:
                     "page": p,
                     "font_size": box.get_font_size(),
                     "font_name": _get_font_name(box),
-                } for box in pdf_page.text_list(
-                    pdf_page.TextListOption.text_list_include_font)
+                }
+                for box in pdf_page.text_list(pdf_page.TextListOption.text_list_include_font)
             ])
         return boxes
 
@@ -108,7 +115,6 @@ def unbox_text(text_boxes: Iterable[TextBox]) -> Generator[tuple[str, int], Any,
         yield item["text"]
 
 
-
 def custom_analyzer(
     tokenizer: Tokenizer,
     *,
@@ -123,6 +129,7 @@ def custom_analyzer(
     if filter_tokens is None:
         filter_tokens = []
     if filter_textboxes is None:
+
         def filter_textboxes(_tbx):
             return True
 

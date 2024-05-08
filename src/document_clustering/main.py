@@ -1,11 +1,8 @@
 #!/usr/bin/env -S python3 -i
-# ruff: noqa: D103, F401
+# ruff: noqa: D103, F401, TCH003
 """Experimenting and Messy Code."""
 
-
-__author__ = "Leona Gottfried"
-__version__ = "0.1.0"
-__license__ = "MIT"
+from __future__ import annotations
 
 import logging
 import operator
@@ -21,17 +18,20 @@ from glassplitter import Tokenizer
 from document_clustering import arxiv_dataset
 from document_clustering.pdf_extract import PdfDocument, unbox_text
 
+__author__ = "Leona Gottfried"
+__version__ = "0.1.0"
+__license__ = "MIT"
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
 
 def bag_of_words(): ...  # TODO (leogott): implement this
 
 
 def bag_of_chars(arg: str):
     characters = Counter(arg)
-    chars_sans_letters = {
-        key: count for key, count in characters.items() if key not in ascii_letters
-    }
+    chars_sans_letters = {key: count for key, count in characters.items() if key not in ascii_letters}
     print(chars_sans_letters, sort_dicts=True)
 
 
@@ -58,6 +58,7 @@ def font_size_filter(min_font_size=0, max_font_size=10):
             logger.debug("Discarded item with text: %s", item["text"])
             return False
         return True
+
     return filter_font_size
 
 
@@ -67,6 +68,7 @@ def font_name_filter(font_list: list, *, accept=True):
             logger.debug("Font matched on item with text %s", item["text"])
             return accept
         return not accept
+
     return filter_font_name
 
 
@@ -80,10 +82,9 @@ def _debug_replace_urls(text: str) -> str:
 
 def replace_urls(text: str, replace_with: str | Callable[..., str] = "") -> str:
     """Replace urls using the given string or function."""
-    p = re.compile(
-        r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
-    )
+    p = re.compile(r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)")
     return re.sub(p, replace_with, text)
+
 
 def recombine(sentence_list, text_boxes):
     """Re-attach (potentially un-hashable) data-objects.
@@ -95,6 +96,7 @@ def recombine(sentence_list, text_boxes):
     group_data = dict(enumerate(text_boxes))
     for sentence in sentence_list:
         yield [(a, group_data[i]) for a, i in sentence]
+
 
 def tokenize_with_data(tokenizer: Tokenizer, text_boxes):
     """Tokenize text-boxes.
@@ -114,10 +116,13 @@ def tokenize_only(tokenizer: Tokenizer, spans: list[str]) -> list[list[str]]:
     for sentence in sentence_list:
         yield [a for a, i in sentence]
 
+
 def tokenizer_flat_wrapped(tokenizer: Tokenizer) -> Callable:
     def tokenize(arg: str):
         return list(reduce(operator.add, tokenize_only(tokenizer, arg)))
+
     return tokenize
+
 
 def filter_text_boxes(text_boxes, filters: list[Callable[..., bool]]):
     """Apply each filter."""
@@ -138,7 +143,8 @@ if __name__ == "__main__":
         [
             font_name_filter(["Times-Roman"], accept=False),
             font_size_filter(),
-        ])
+        ],
+    )
 
     out = list(tokenize_with_data(tokenize_only, spans))
     rich.print(out)

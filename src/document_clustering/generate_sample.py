@@ -29,6 +29,7 @@ logging.basicConfig(
     handlers=[RichHandler(log_time_format="%X")],
 )
 logger = logging.getLogger(__name__)
+logger.addHandler(RichHandler(log_time_format="%X"))
 logger.setLevel(logging.DEBUG)
 
 # Config
@@ -37,8 +38,7 @@ set_config(transform_output="pandas")
 N_CLUSTERS = 5
 
 # Data, Metadata
-
-arxiv_sample = fetch_arxiv_sample(Path("sample/50_ids.txt"))
+arxiv_sample = fetch_arxiv_sample(Path("src/document_clustering/sample/50_ids.txt"))
 metadata = pd.DataFrame({
     "arxiv_id": arxiv_sample.ids,
     "title": arxiv_sample.titles,
@@ -63,9 +63,7 @@ with execution_time() as t:
         try:
             data.append(analyzer(pdf))
         except:
-            logger.exception(
-            "An error occured while handling arxiv_id %s", arxiv_sample.ids[i]
-        )
+            logger.exception("An error occured while handling arxiv_id %s", arxiv_sample.ids[i])
             raise
 logger.info(f"Tokenized {len(data)=} PDFs in {t()}")
 
@@ -79,6 +77,7 @@ tfidf_vectorizer = make_pipeline(
         # vectorizer expects documents to be of str, so some trickery is required here
         preprocessor=partial(map, str.lower),
         tokenizer=lambda x: x,  # documents are tokenized already
+        token_pattern=None,
         max_features=5000,
         # stop_words and ngram_range are not used when analyzer in use
         stop_words="english",
@@ -107,13 +106,16 @@ order_centroids = original_space_centroids.argsort()[:, ::-1]
 terms = tfidf_vectorizer.get_feature_names_out()
 
 for i in range(N_CLUSTERS):
-    line = f"Cluster {i}: " + "".join(
-            [f"'{terms[ind]}' " for ind in order_centroids[i, :10]]
-        )
+    line = f"Cluster {i}: " + "".join([f"'{terms[ind]}' " for ind in order_centroids[i, :10]])
     logger.info(line)
 
 # { "topics" : {"id":"1", "top 5": ["bag", "image", "cup"] }}
-topics = {"kmeans": [{"cluster": str(i), "size": cluster_sizes[i], "top 5": [terms[tid] for tid in order_centroids[i, :5]]} for i in range(N_CLUSTERS)]}
+topics = {
+    "kmeans": [
+        {"cluster": str(i), "size": cluster_sizes[i], "top 5": [terms[tid] for tid in order_centroids[i, :5]]}
+        for i in range(N_CLUSTERS)
+    ]
+}
 
 
 # Analysis: Documents

@@ -1,7 +1,6 @@
 # ruff: noqa: S301
 """Abstraction layer for downloading, caching, loading PDFs from ArXiV."""
 
-
 __author__ = "Leona Gottfried"
 __version__ = "0.1.0"
 __license__ = "MIT"
@@ -42,7 +41,7 @@ def query_metadata(arxiv_id):
 def get(arxiv_id) -> bytes:
     """Return the binary content of the requested paper's pdf."""
     url = f"https://export.arxiv.org/pdf/{arxiv_id}"
-    with urlopen(url) as s:
+    with urlopen(url) as s:  # noqa: S310
         pdf = s.read()
         if not is_pdf(pdf):
             raise RuntimeError("arxiv did not return a pdf for {}", arxiv_id)
