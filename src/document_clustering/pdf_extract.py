@@ -1,7 +1,7 @@
 import logging
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Iterable
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import poppler
 import poppler.page
@@ -102,9 +102,9 @@ def _get_font_name(box):
         return "Error"
 
 
-def unbox_text(text_boxes: list[TextBox])-> Generator[tuple[str, int], Any, None]:
+def unbox_text(text_boxes: Iterable[TextBox]) -> Generator[tuple[str, int], Any, None]:
     """Take the output from poppler_textboxes_flat and turn it into something glassplitter can digest."""
-    for i, item in enumerate(text_boxes):
+    for item in text_boxes:
         yield item["text"]
 
 
@@ -114,12 +114,14 @@ def custom_analyzer(
     *,
     filter_textboxes: Callable[[TextBox], bool] = lambda tbx: True,
     transform_sentences: Callable[[str], str] = lambda snt: snt,
-    filter_tokens: list[str] = [],
+    filter_tokens: Optional[list[str]] = None,
 ):
     """Turn a pdf into a list of str tokens.
 
     Preprocessor and tokenizer in one.
     """
+    if filter_tokens is None:
+        filter_tokens = []
 
     def wrapped_custom_analyzer(pdf):
         # No sentence segmentation, assume each text-box contains exactly one sentence

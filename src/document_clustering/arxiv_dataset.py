@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # ruff: noqa: S301
 """Abstraction layer for downloading, caching, loading PDFs from ArXiV."""
 

@@ -21,7 +21,7 @@ from document_clustering.arxiv_dataset import fetch_arxiv_sample
 from document_clustering.pdf_extract import custom_analyzer
 from document_clustering.utils import execution_time
 
-## Logger
+# Logger
 
 logging.basicConfig(
     level=logging.INFO,
@@ -31,12 +31,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-## Config
+# Config
 
 set_config(transform_output="pandas")
 N_CLUSTERS = 5
 
-## Data, Metadata
+# Data, Metadata
 
 arxiv_sample = fetch_arxiv_sample(Path("sample/50_ids.txt"))
 metadata = pd.DataFrame({
@@ -46,11 +46,11 @@ metadata = pd.DataFrame({
 })
 corpus = arxiv_sample.data
 
-## Tokenizer
+# Tokenizer
 
 tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
 
-## Preprocessor
+# Preprocessor
 
 stop_words = ["", "the"]
 # TODO(leogott): insert preproc pipeline here
@@ -69,7 +69,7 @@ with execution_time() as t:
             raise
 logger.info(f"Tokenized {len(data)=} PDFs in {t()}")
 
-## Tfidf Vectorizer
+# Tfidf Vectorizer
 
 tfidf_vectorizer = make_pipeline(
     CountVectorizer(
@@ -78,7 +78,7 @@ tfidf_vectorizer = make_pipeline(
         #
         # vectorizer expects documents to be of str, so some trickery is required here
         preprocessor=partial(map, str.lower),
-        tokenizer=lambda x: x, # documents are tokenized already
+        tokenizer=lambda x: x,  # documents are tokenized already
         #
         max_features=5000,
         # stop_words and ngram_range are not used when analyzer in use
@@ -91,14 +91,14 @@ with execution_time() as t:
     tfidf_matrix = tfidf_vectorizer.fit_transform(data)
 logger.info(f"Vectorization done in {t()}")
 
-## KMeans Clustering
+# KMeans Clustering
 
 kmeans = KMeans(n_clusters=N_CLUSTERS, random_state=0)
 with execution_time() as t:
     kmeans.fit(tfidf_matrix)
 logger.info(f"Clustering done in {t()}")
 
-## Analysis: Clusters
+# Analysis: Clusters
 
 _cluster_ids, cluster_sizes = np.unique(kmeans.labels_, return_counts=True)
 logger.info(f"Number of elements assigned to each cluster: {cluster_sizes}")
@@ -117,7 +117,7 @@ for i in range(N_CLUSTERS):
 topics = {"kmeans": [{"cluster": str(i), "size": cluster_sizes[i], "top 5": [terms[tid] for tid in order_centroids[i, :5]]} for i in range(N_CLUSTERS)]}
 
 
-## Analysis: Documents
+# Analysis: Documents
 
 kmeans_pipeline = make_pipeline(tfidf_vectorizer, kmeans)
 

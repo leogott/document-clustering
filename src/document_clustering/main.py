@@ -18,13 +18,13 @@ from string import ascii_letters
 import rich
 from glassplitter import Tokenizer
 
-import document_clustering.arxiv_dataset as arxiv_dataset
+from document_clustering import arxiv_dataset
 from document_clustering.pdf_extract import PdfDocument, unbox_text
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def bag_of_words(): ... #TODO (leogott): implement this
+def bag_of_words(): ...  # TODO (leogott): implement this
 
 
 def bag_of_chars(arg: str):
