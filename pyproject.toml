@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "document-clustering"
-dynamic = ["version"]
-description = ''
+version = "0.1.0"
+description = 'Clustering documents according to document similarity, with a focus on scientific publications'
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "MIT"
 keywords = []
 authors = [
@@ -16,13 +16,10 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = []
 
@@ -30,9 +27,6 @@ dependencies = []
 Documentation = "https://github.com/unknown/document-clustering#readme"
 Issues = "https://github.com/unknown/document-clustering/issues"
 Source = "https://github.com/unknown/document-clustering"
-
-[tool.hatch.version]
-path = "src/document_clustering/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
