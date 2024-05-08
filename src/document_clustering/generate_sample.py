@@ -17,9 +17,9 @@ from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import make_pipeline
 
-from arxiv_dataset import fetch_arxiv_sample
-from pdf_extract import custom_analyzer
-from utils import execution_time
+from document_clustering.arxiv_dataset import fetch_arxiv_sample
+from document_clustering.pdf_extract import custom_analyzer
+from document_clustering.utils import execution_time
 
 ## Logger
 

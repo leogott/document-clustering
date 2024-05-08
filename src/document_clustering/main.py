@@ -18,8 +18,8 @@ from string import ascii_letters
 import rich
 from glassplitter import Tokenizer
 
-import arxiv_dataset
-from pdf_extract import PdfDocument, unbox_text
+import document_clustering.arxiv_dataset as arxiv_dataset
+from document_clustering.pdf_extract import PdfDocument, unbox_text
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
