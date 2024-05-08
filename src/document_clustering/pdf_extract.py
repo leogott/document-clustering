@@ -6,9 +6,7 @@ from typing import Any
 import poppler
 import poppler.page
 from glassplitter import Tokenizer
-from pdfminer.high_level import extract_text
 from poppler.page import TextBox
-from pypdf import PdfReader
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +35,7 @@ class PdfDocument:
         return cls(Path(path).read_bytes())
 
     def pypdf_extract_text(self) -> str:
+        from pypdf import PdfReader
         """Return the entire text data of a pdf using pypdf."""
         # https://pypdf.readthedocs.io/en/stable/user/post-processing-in-text-extraction.html
         # https://pypdf.readthedocs.io/en/stable/user/extract-text.html
@@ -46,6 +45,7 @@ class PdfDocument:
         return " ".join(pages)
 
     def pdfminersix_extract_text(self) -> str:
+        from pdfminer.high_level import extract_text
         """Return the entire text data of a pdf using pdfminer.six."""
         # https://pdfminersix.readthedocs.io/en/latest/topic/converting_pdf_to_text.html
         # https://www.unixuser.org/~euske/python/pdfminer/programming.html

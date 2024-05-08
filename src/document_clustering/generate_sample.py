@@ -79,7 +79,6 @@ tfidf_vectorizer = make_pipeline(
         # vectorizer expects documents to be of str, so some trickery is required here
         preprocessor=partial(map, str.lower),
         tokenizer=lambda x: x,  # documents are tokenized already
-        #
         max_features=5000,
         # stop_words and ngram_range are not used when analyzer in use
         stop_words="english",

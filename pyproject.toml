@@ -7,7 +7,7 @@ name = "document-clustering"
 version = "0.1.0"
 description = 'Clustering documents according to document similarity, with a focus on scientific publications'
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9" # 3.9 Support wird für Neuron gebraucht
 license = "MIT"
 keywords = []
 authors = [
@@ -21,7 +21,14 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
 ]
-dependencies = []
+dependencies = [
+  "feedparser",
+  "matplotlib",
+  "numpy",
+  "pandas",
+  "python-poppler",
+  "scikit-learn",
+]
 
 [project.urls]
 Documentation = "https://github.com/unknown/document-clustering#readme"
@@ -46,7 +53,7 @@ cov = [
 ]
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+python = ["3.9", "3.10", "3.11", "3.12"]
 
 [tool.hatch.envs.types]
 dependencies = [
@@ -54,6 +61,9 @@ dependencies = [
 ]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/document_clustering tests}"
+
+[tool.hatch.envs.hatch-static-analysis]
+# config-path = "ruff_defaults.toml"
 
 [tool.coverage.run]
 source_pkgs = ["document_clustering", "tests"]
@@ -73,3 +83,19 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
+
+[tool.ruff.format]
+preview=true
+
+[tool.ruff.lint]
+preview = true
+ignore = []
+extend-select = [
+  "ARG",
+  "F",
+  "C901", #McCabe complexity
+]
+extend-ignore = ["G004"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"src/*/main.py" = ["T201"]

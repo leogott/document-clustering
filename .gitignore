@@ -9,6 +9,9 @@ process/
 cache/*
 !cache/CACHEDIR.TAG
 
+# Distribution / Packaging
+dist/
+
 # Logging and temp files
 *log.txt
 *out.txt
