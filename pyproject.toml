@@ -28,6 +28,15 @@ dependencies = [
   "pandas",
   "python-poppler",
   "scikit-learn",
+  "glassplitter @ git+https://github.com/glaserL/glassplitter.git#egg=glassplitter", #WIP
+  "rich", #WIP
+  # libpoppler-cpp-dev ?
+]
+
+[project.optional-dependencies]
+tests = [
+  "pytest",
+  "pytest-cov"
 ]
 
 [project.urls]
@@ -63,6 +72,9 @@ check = "mypy --install-types --non-interactive {args:src/document_clustering te
 
 [tool.hatch.envs.hatch-static-analysis]
 # config-path = "ruff_defaults.toml"
+
+[tool.hatch.metadata]
+allow-direct-references = true #DEBUG
 
 [tool.coverage.run]
 source_pkgs = ["document_clustering", "tests"]
