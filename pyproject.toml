@@ -51,7 +51,6 @@ include = [
   "doc/"
 ]
 
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/document-clustering"]
 
