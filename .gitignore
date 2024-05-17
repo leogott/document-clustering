@@ -6,6 +6,8 @@ topic-modeling-arxiv-abstract-with-bertopic.ipynb
 .vscode/
 .idea/
 .nox/
+.ruff_cache
+.pytest_cache
 process/
 cache/*
 !cache/CACHEDIR.TAG
