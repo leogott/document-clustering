@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "document-clustering"
+version = "0.1.0"
+description = 'Clustering documents according to document similarity, with a focus on scientific publications'
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Leona Gottfried", email = "61663141+leogott@users.noreply.github.com" },
+  { name = "Center for Cognition and Computation (CCC) Frankfurt/Main" },
+  { name = "Lehrstuhl für Angewandte Computerlinguistik (ACoLi) Augsburg" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = ["python-poppler"]
+
+[project.optional-dependencies]
+cli = ["rich"]
+
+[project.urls]
+Documentation = "https://github.com/acoli-repo/document-clustering#readme"
+Issues = "https://github.com/acoli-repo/document-clustering/issues"
+Source = "https://github.com/acoli-repo/document-clustering"
+
+[tool.hatch.version]
+path = "src/document_clustering/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/document_clustering tests}"
+
+[tool.coverage.run]
+source_pkgs = ["document_clustering", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/document_clustering/__about__.py",
+]
+
+[tool.coverage.paths]
+document_clustering = ["src/document_clustering", "*/document-clustering/src/document_clustering"]
+tests = ["tests", "*/document-clustering/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]

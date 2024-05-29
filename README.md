@@ -1,8 +1,27 @@
-# ACoLi Document Clustering
+# Document Clustering
+
+[![PyPI - Version](https://img.shields.io/pypi/v/document-clustering.svg)](https://pypi.org/project/document-clustering)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/document-clustering.svg)](https://pypi.org/project/document-clustering)
+
+-----
 
 Clustering documents according to document similarity, with a focus on scientific publications.
 
-It's probably best to write this from scratch, but there are several earlier in-house implementations that can be taken into consideration in the `old/` directory:
+## Table of Contents
 
-- `old/2019-beta-writer`: plain cosine-based document clustering
-- `old/2021-beta-writer`: minor revision of `2019-beta-writer` with duplicate avoidance
+- [Installation](#installation)
+- [License](#license)
+
+## Installation
+
+```console
+pip install document-clustering
+```
+
+## License
+
+`document-clustering` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+
+## Beta-Writer
+
+This project was written from scratch, but there are several earlier in-house implementations in the beta-writer branch of this repository.
