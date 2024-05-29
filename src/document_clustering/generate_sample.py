@@ -7,6 +7,7 @@ __license__ = "MIT"
 import logging
 from functools import partial
 from pathlib import Path
+from string import ascii_letters
 
 import numpy as np
 import pandas as pd
