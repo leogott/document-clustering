@@ -26,7 +26,6 @@ dependencies = [
   "matplotlib",
   "numpy",
   "pandas",
-  "python-poppler",
   "scikit-learn",
   "glassplitter @ git+https://github.com/glaserL/glassplitter.git#egg=glassplitter", # WIP
   "rich", # WIP
@@ -37,6 +36,9 @@ tests = [
   "nox",
   "pytest",
   "pytest-cov",
+]
+pdf = [
+  "python-poppler",
 ]
 
 [project.urls]
