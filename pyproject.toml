@@ -54,7 +54,7 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/document-clustering"]
+packages = ["src/document_clustering"]
 
 [tool.coverage.paths]
 document_clustering = ["src/document_clustering", "*/document-clustering/src/document_clustering"]
