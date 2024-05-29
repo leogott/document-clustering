@@ -4,6 +4,8 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from document_clustering.generate_sample import arxiv_sample, logger
+from document_clustering.utils import execution_time
 import poppler
 import poppler.page
 
@@ -77,7 +79,9 @@ class PdfDocument:
         try:
             pdf_document = poppler.load_from_data(pdf_data)
         except ValueError:
-            logger.exception(f"Poppler didn't like this pdf file of length {len(pdf_data)}.")
+            logger.exception(
+                f"Poppler didn't like this pdf file of length {len(pdf_data)}."
+            )
             logger.debug(f"File starts with: {pdf_data[:500]}")
             raise
 
@@ -85,15 +89,19 @@ class PdfDocument:
         boxes = []
         for p, page_index in enumerate(range(pdf_document.pages)):
             pdf_page = pdf_document.create_page(page_index)
-            boxes.extend([
-                {
-                    "text": box.text,
-                    "page": p,
-                    "font_size": box.get_font_size(),
-                    "font_name": _get_font_name(box),
-                }
-                for box in pdf_page.text_list(pdf_page.TextListOption.text_list_include_font)
-            ])
+            boxes.extend(
+                [
+                    {
+                        "text": box.text,
+                        "page": p,
+                        "font_size": box.get_font_size(),
+                        "font_name": _get_font_name(box),
+                    }
+                    for box in pdf_page.text_list(
+                        pdf_page.TextListOption.text_list_include_font
+                    )
+                ]
+            )
         return boxes
 
 
@@ -149,3 +157,35 @@ def custom_analyzer(
         return list(filtered_tokens)
 
     return wrapped_custom_analyzer
+
+
+# Tokenizer
+
+tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
+
+
+def preprocess(corpus: list[bytes]):
+    """Analyze and Tokenize corpus.
+
+    corpus: list of pdfs
+    """
+
+    # Preprocessor
+
+    stop_words = ["", "the"]
+    # TODO(leogott): insert preproc pipeline here
+    # TODO(leogott): String Transformation / str.lower
+    analyzer = custom_analyzer(tokenizer, filter_tokens=stop_words)
+    data = []
+    with execution_time() as t:
+        for i, pdf in enumerate(corpus):
+            logger.debug("Analyzing pdf %s", arxiv_sample.ids[i])
+            try:
+                data.append(analyzer(pdf))
+            except:
+                logger.exception(
+                    "An error occured while handling arxiv_id %s", arxiv_sample.ids[i]
+                )
+                raise
+    logger.info(f"Tokenized {len(data)=} PDFs in {t()}")
+    return data
