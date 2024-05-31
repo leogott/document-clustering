@@ -28,6 +28,8 @@ dependencies = [
   "pandas",
   "scikit-learn",
   "glassplitter @ git+https://github.com/glaserL/glassplitter.git#egg=glassplitter", # WIP
+  "python-poppler",
+  "rich",
 ]
 
 [project.optional-dependencies]
