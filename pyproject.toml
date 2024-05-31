@@ -12,6 +12,8 @@ license = "MIT"
 keywords = []
 authors = [
   {name = "Leona Gottfried", email = "61663141+leogott@users.noreply.github.com"},
+  { name = "Center for Cognition and Computation (CCC) Frankfurt/Main" },
+  { name = "Lehrstuhl für Angewandte Computerlinguistik (ACoLi) Augsburg" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
