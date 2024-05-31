@@ -1,5 +1,5 @@
 #!/usr/bin/env -S python3 -i
-# ruff: noqa: D103, F401, TCH003
+# ruff: noqa: D103, F401, TCH003, T201, ANN001, ANN201
 """Experimenting and Messy Code."""
 
 from __future__ import annotations
@@ -8,7 +8,7 @@ import logging
 import operator
 import re
 from collections import Counter
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Generator, Iterable
 from functools import reduce
 from string import ascii_letters
 
@@ -107,21 +107,6 @@ def tokenize_with_data(tokenizer: Tokenizer, text_boxes):
     return list(recombine(sentence_list, text_boxes))
 
 
-def tokenize_only(tokenizer: Tokenizer, spans: list[str]) -> list[list[str]]:
-    """Extract text from Poppler text-boxes."""
-    sentence_list = tokenizer.split(spans, trim=True)
-
-    for sentence in sentence_list:
-        yield [a for a, i in sentence]
-
-
-def tokenizer_flat_wrapped(tokenizer: Tokenizer) -> Callable:
-    def tokenize(arg: str):
-        return list(reduce(operator.add, tokenize_only(tokenizer, arg)))
-
-    return tokenize
-
-
 def filter_text_boxes(text_boxes, filters: list[Callable[..., bool]]):
     """Apply each filter."""
     for fun in filters:
@@ -131,7 +116,7 @@ def filter_text_boxes(text_boxes, filters: list[Callable[..., bool]]):
 
 if __name__ == "__main__":
     # spans = [("I am a ", {"line": 1}), ("split sentence!", {"line": 2})]
-    tokenize_only = Tokenizer(lang="en", clean=True, doc_type="pdf")
+    tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
     # [[("", 0), ("I", 0), ("am", 0), ("a", 0), ("split", 1), ("sentence", 1), ("!", 1), ("", 1)]]
     paper = arxiv_dataset.get("2301.06511")
     spans = PdfDocument(paper).poppler_textboxes_flat()[:99]
@@ -144,5 +129,5 @@ if __name__ == "__main__":
         ],
     )
 
-    out = list(tokenize_with_data(tokenize_only, spans))
+    out = list(tokenize_with_data(tokenizer, spans))
     rich.print(out)

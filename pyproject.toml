@@ -150,7 +150,6 @@ extend-ignore = [
   "UP007", # slight disagree
 ]
 [tool.ruff.lint.extend-per-file-ignores]
-"src/*/main.py" = ["T201", "ANN"]
 "*.ipynb" = ["T2", "ANN", "D"]
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
