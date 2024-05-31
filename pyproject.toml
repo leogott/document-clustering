@@ -28,7 +28,6 @@ dependencies = [
   "pandas",
   "scikit-learn",
   "glassplitter @ git+https://github.com/glaserL/glassplitter.git#egg=glassplitter", # WIP
-  "rich", # WIP
 ]
 
 [project.optional-dependencies]
@@ -39,6 +38,10 @@ tests = [
 ]
 pdf = [
   "python-poppler",
+]
+cli = [
+  "rich",
+  "tqdm",
 ]
 
 [project.urls]
