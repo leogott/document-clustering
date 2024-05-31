@@ -18,11 +18,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-__author__ = "Leona Gottfried"
-__version__ = "0.1.0"
-__license__ = "MIT"
-
-
 def is_pdf(data: bytes) -> bool:
     """Verify that the data starts with the correct magic bytes."""
     return data.startswith(b"%PDF")
