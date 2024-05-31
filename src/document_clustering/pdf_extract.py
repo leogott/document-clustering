@@ -10,7 +10,6 @@ import poppler.page
 from glassplitter import Tokenizer
 from poppler.page import TextBox
 
-from document_clustering.generate_sample import arxiv_sample
 from document_clustering.utils import execution_time
 
 logger = logging.getLogger(__name__)
@@ -157,7 +156,7 @@ def custom_analyzer(
 tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
 
 
-def preprocess(corpus: list[bytes]) -> list[str]:
+def preprocess(corpus: list[bytes], filenames: list[str] = None) -> list[str]:
     """Analyze and Tokenize corpus.
 
     corpus: list of pdfs
@@ -171,12 +170,16 @@ def preprocess(corpus: list[bytes]) -> list[str]:
     data = []
     with execution_time() as t:
         for i, pdf in enumerate(corpus):
-            logger.debug("Analyzing pdf %s", arxiv_sample.ids[i])
+            if filenames is None:
+                pdf_name = str(i)
+            else:
+                pdf_name = filenames[i]
+            logger.debug("Analyzing pdf %s", pdf_name)
             try:
                 data.append(analyzer(pdf))
             except:
                 logger.exception(
-                    "An error occured while handling arxiv_id %s", arxiv_sample.ids[i]
+                    "An error occured while handling %s", pdf_name
                 )
                 raise
     logger.info(f"Tokenized {len(data)=} PDFs in {t()}")
