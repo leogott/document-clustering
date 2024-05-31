@@ -14,7 +14,6 @@ from document_clustering.pdf_extract import is_pdf
 from document_clustering.utils import shelve_memoize
 
 logger = logging.getLogger(__name__)
-log = logger.debug
 
 
 @shelve_memoize("arxiv_metadata_cache")

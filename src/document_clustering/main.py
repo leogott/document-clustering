@@ -18,8 +18,9 @@ from glassplitter import Tokenizer
 from document_clustering import arxiv_dataset
 from document_clustering.pdf_extract import PdfDocument, unbox_text
 
+if __name__ == "__name__":
+    logging.basicConfig(level=logging.DEBUG)
 
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 

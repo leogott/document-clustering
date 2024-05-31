@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 import poppler
 import poppler.page
 
-from document_clustering.generate_sample import arxiv_sample, logger
+from document_clustering.generate_sample import arxiv_sample
 from document_clustering.utils import execution_time
 
 if TYPE_CHECKING:
