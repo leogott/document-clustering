@@ -1,20 +1,17 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable, Generator, Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any, Self
 
 import poppler
 import poppler.page
+from glassplitter import Tokenizer
+from poppler.page import TextBox
 
 from document_clustering.generate_sample import arxiv_sample
 from document_clustering.utils import execution_time
-
-if TYPE_CHECKING:
-    from collections.abc import Callable, Generator, Iterable
-
-    from glassplitter import Tokenizer
-    from poppler.page import TextBox
 
 logger = logging.getLogger(__name__)
 
@@ -26,21 +23,21 @@ def is_pdf(data: bytes) -> bool:
 class PdfDocument:
     """Wrapper for pdf utilities."""
 
-    def __init__(self, file):
+    def __init__(self, file: bytes):
         self.content = file
         if not is_pdf(self.content):
             msg = "file must be a PDF document"
             raise ValueError(msg)
 
     @classmethod
-    def from_file(cls, path):
+    def from_file(cls, path: Path | str) -> Self:
         """Alternative constructor from path or path-like."""
         return cls(Path(path).read_bytes())
 
     def pypdf_extract_text(self) -> str:
+        """Return the entire text data of a pdf using pypdf."""
         from pypdf import PdfReader  # noqa: PLC0415
 
-        """Return the entire text data of a pdf using pypdf."""
         # https://pypdf.readthedocs.io/en/stable/user/post-processing-in-text-extraction.html
         # https://pypdf.readthedocs.io/en/stable/user/extract-text.html
         reader = PdfReader(self.content)
@@ -49,9 +46,9 @@ class PdfDocument:
         return " ".join(pages)
 
     def pdfminersix_extract_text(self) -> str:
+        """Return the entire text data of a pdf using pdfminer.six."""
         from pdfminer.high_level import extract_text  # noqa: PLC0415
 
-        """Return the entire text data of a pdf using pdfminer.six."""
         # https://pdfminersix.readthedocs.io/en/latest/topic/converting_pdf_to_text.html
         # https://www.unixuser.org/~euske/python/pdfminer/programming.html
         return extract_text(self.content)
@@ -101,7 +98,7 @@ class PdfDocument:
         return boxes
 
 
-def _get_font_name(box):
+def _get_font_name(box: poppler.page.TextBox):
     """Wrap get_font_name method in a try-except.
 
     fixes problem with paper 0704.0014
@@ -125,7 +122,7 @@ def custom_analyzer(
     filter_textboxes: Callable[[TextBox], bool] | None = None,
     transform_sentences: Callable[[str], str] = lambda snt: snt,
     filter_tokens: list[str] | None = None,
-):
+) -> Callable[[bytes], list[str]]:
     """Turn a pdf into a list of str tokens.
 
     Preprocessor and tokenizer in one.
@@ -134,10 +131,10 @@ def custom_analyzer(
         filter_tokens = []
     if filter_textboxes is None:
 
-        def filter_textboxes(_tbx):
+        def filter_textboxes(_tbx: poppler.page.TextBox):
             return True
 
-    def wrapped_custom_analyzer(pdf):
+    def wrapped_custom_analyzer(pdf: bytes):
         # No sentence segmentation, assume each text-box contains exactly one sentence
         textboxes = PdfDocument(pdf).poppler_textboxes_flat()
 
@@ -160,12 +157,11 @@ def custom_analyzer(
 tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
 
 
-def preprocess(corpus: list[bytes]):
+def preprocess(corpus: list[bytes]) -> list[str]:
     """Analyze and Tokenize corpus.
 
     corpus: list of pdfs
     """
-
     # Preprocessor
 
     stop_words = ["", "the"]

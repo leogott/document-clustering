@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import logging
 from collections.abc import Iterable
 from functools import partial
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -35,9 +37,21 @@ tfidf_vectorizer = make_pipeline(
 )
 
 
-def cluster(data: Iterable[Iterable[str]], n_clusters=5):
-    """data is expected to be tokenized"""
+def cluster(data: Iterable[Iterable[str]], n_clusters: int = 5) -> Pipeline:
+    """Build and fit a KMeans Pipeline.
 
+    The Pipeline consists of a Count Vectorizer, Tfidf Transformer,
+    and KMeans Clustering.
+
+    Parameters
+    ----------
+    data :  List of lists (Documents) of strings (Tokens)
+    n_clusters : Desired number of clusters (must be larger than `len(data)`)
+
+    Returns
+    -------
+    kmeans_pipeline : sk_learn.Pipeline object
+    """
     # KMeans Clustering
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=0)
@@ -62,13 +76,20 @@ def transform(
     fitted_pipeline: Pipeline,
     data: Iterable[Iterable[str]],
     metadata: Optional[pd.DataFrame],
-):
-    """
-    fitted_pipeline + data -> document_df
+) -> pd.DataFrame:
+    """Associate Documents to clusters and attach metadata.
 
+    Parameters
+    ----------
+        fitted_pipeline (Pipeline): fitted KMeans-Pipeline generated with cluster()
+        data (Iterable[Iterable[str]]): List of tokenized documents
+        metadata (Optional[pd.DataFrame]): Optional metadata
+
+    Returns
+    -------
+        pd.DataDrame: DataFrame associating documents with Clusters and metadata.
     """
     kmeans = fitted_pipeline.named_steps.kmeans
-    tfidf_vectorizer = fitted_pipeline.named_steps.tfidf_vectorizer  # TODO fix name
 
     # Analysis: Documents
 
@@ -78,13 +99,13 @@ def transform(
 
     if metadata is None:
         return cluster_distances
-    else:
-        cluster_metadata = cluster_distances.join(metadata)
-        return cluster_metadata
+    cluster_metadata = cluster_distances.join(metadata)
+    return cluster_metadata
 
 
-def extract(fitted_pipeline: Pipeline):
-    """
+def extract(fitted_pipeline: Pipeline) -> dict[str, list[dict[str, Any]]]:
+    """Extract information about individual clusters from KMeans Pipeline.
+
     fitted_pipeline -> cluster_df
     evtl perspektivisch:
     document_df (+ data) -> cluster_df

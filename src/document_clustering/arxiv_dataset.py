@@ -2,6 +2,7 @@
 """Abstraction layer for downloading, caching, loading PDFs from ArXiV."""
 
 import logging
+from collections.abc import Mapping
 from io import BytesIO
 from pathlib import Path
 from urllib.parse import urlencode
@@ -17,9 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 @shelve_memoize("arxiv_metadata_cache")
-def query_metadata(arxiv_id):
+def query_metadata(arxiv_id: str) -> Mapping:
     """Query the ArXiV-Dataset for metadata.
 
+    Parameters
+    ----------
     arxiv_id: (required) Provide a specific ID.
 
     arXiv provides an API in the form of an Atom feed. This function conveniently
@@ -33,7 +36,7 @@ def query_metadata(arxiv_id):
 
 
 @shelve_memoize("arxiv_cache")
-def get(arxiv_id) -> bytes:
+def get(arxiv_id: str) -> bytes:
     """Return the binary content of the requested paper's pdf."""
     url = f"https://export.arxiv.org/pdf/{arxiv_id}"
     with urlopen(url) as s:  # noqa: S310
@@ -51,9 +54,8 @@ def stream(arxiv_id: str) -> BytesIO:
     return BytesIO(get(arxiv_id))
 
 
-def fetch_arxiv_sample(file=Path("sample/test_sample.txt")):
-    """
-    Return a Bunch (Dict-like) of the specified papers and some metadata.
+def fetch_arxiv_sample(file: Path = Path("sample/test_sample.txt")) -> Bunch:
+    """Return a Bunch (Dict-like) of the specified papers and some metadata.
 
     Beware: data is just a list of pdfs in byte form.
     """

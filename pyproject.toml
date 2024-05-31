@@ -131,13 +131,26 @@ extend-select = [
   "ARG",
   "F",
   "C901", # McCabe complexity
+  "TD",
+  "ANN",
+  "D",
+  "FIX",
 ]
 extend-ignore = [
   "EM101", # Fix upstream
   "G004", # Logging-f-string
   "S403", # While shelve may be insecure, we're not loading arbirtary files
   "TRY003",
+  "D100",
+  "D104", "TD003", # TODO @leogott: These should be fixed eventually, but are low prio
+  "ANN202",
+  "ANN204",
+  "TCH002", "TCH003", # I don't understand the implications
+  "RET504",
+  "UP007", # slight disagree
 ]
-
 [tool.ruff.lint.extend-per-file-ignores]
-"src/*/main.py" = ["T201"]
+"src/*/main.py" = ["T201", "ANN"]
+"*.ipynb" = ["T2", "ANN", "D"]
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
