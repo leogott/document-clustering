@@ -4,10 +4,11 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from document_clustering.generate_sample import arxiv_sample, logger
-from document_clustering.utils import execution_time
 import poppler
 import poppler.page
+
+from document_clustering.generate_sample import arxiv_sample, logger
+from document_clustering.utils import execution_time
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Generator, Iterable

@@ -2,11 +2,12 @@
 
 import logging
 from pathlib import Path
-import pandas as pd
-from document_clustering.clustering import cluster, transform
 
+import pandas as pd
 from rich.logging import RichHandler
+
 from document_clustering.arxiv_dataset import fetch_arxiv_sample
+from document_clustering.clustering import cluster, transform
 from document_clustering.pdf_extract import preprocess
 
 # Logger

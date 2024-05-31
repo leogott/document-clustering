@@ -1,20 +1,16 @@
 import logging
-import numpy as np
-from document_clustering.utils import execution_time
-
-from typing import Optional
+from collections.abc import Iterable
 from functools import partial
+from typing import Optional
 
-from sklearn import set_config
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.pipeline import make_pipeline
-
+import numpy as np
 import pandas as pd
+from sklearn import set_config
 from sklearn.cluster import KMeans
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline, make_pipeline
 
-
-from collections.abc import Iterable
+from document_clustering.utils import execution_time
 
 logger = logging.getLogger(__name__)
 
