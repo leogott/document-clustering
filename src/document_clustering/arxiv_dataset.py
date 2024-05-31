@@ -1,10 +1,6 @@
 # ruff: noqa: S301
 """Abstraction layer for downloading, caching, loading PDFs from ArXiV."""
 
-__author__ = "Leona Gottfried"
-__version__ = "0.1.0"
-__license__ = "MIT"
-
 import logging
 from io import BytesIO
 from pathlib import Path

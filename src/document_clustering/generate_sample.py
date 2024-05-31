@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-__author__ = "Leona Gottfried"
-__version__ = "0.1.0"
-__license__ = "MIT"
-
 import logging
 from pathlib import Path
 import pandas as pd

@@ -18,9 +18,6 @@ from glassplitter import Tokenizer
 from document_clustering import arxiv_dataset
 from document_clustering.pdf_extract import PdfDocument, unbox_text
 
-__author__ = "Leona Gottfried"
-__version__ = "0.1.0"
-__license__ = "MIT"
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

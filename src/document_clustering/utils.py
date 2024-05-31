@@ -15,10 +15,6 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-__author__ = "Leona Gottfried"
-__version__ = "0.1.0"
-__license__ = "MIT"
-
 # Memoize
 
 
