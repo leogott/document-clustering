@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "document-clustering"
-version = "0.1.0"
+version = "0.2.0"
 description = 'Clustering documents according to document similarity, with a focus on scientific publications'
 readme = "README.md"
 requires-python = ">=3.9" # 3.9 Support wird für Neuron gebraucht
