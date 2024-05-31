@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable, Generator, Iterable
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, Optional
 
 import poppler
 import poppler.page
@@ -29,7 +29,7 @@ class PdfDocument:
             raise ValueError(msg)
 
     @classmethod
-    def from_file(cls, path: Path | str) -> Self:
+    def from_file(cls, path: Path | str) -> PdfDocument:
         """Alternative constructor from path or path-like."""
         return cls(Path(path).read_bytes())
 
@@ -156,7 +156,7 @@ def custom_analyzer(
 tokenizer = Tokenizer(lang="en", clean=True, doc_type="pdf")
 
 
-def preprocess(corpus: list[bytes], filenames: list[str] = None) -> list[str]:
+def preprocess(corpus: list[bytes], filenames: Optional[list[str]] = None) -> list[str]:
     """Analyze and Tokenize corpus.
 
     corpus: list of pdfs
@@ -170,10 +170,7 @@ def preprocess(corpus: list[bytes], filenames: list[str] = None) -> list[str]:
     data = []
     with execution_time() as t:
         for i, pdf in enumerate(corpus):
-            if filenames is None:
-                pdf_name = str(i)
-            else:
-                pdf_name = filenames[i]
+            pdf_name = str(i) if (filenames is None) else filenames[i]
             logger.debug("Analyzing pdf %s", pdf_name)
             try:
                 data.append(analyzer(pdf))
